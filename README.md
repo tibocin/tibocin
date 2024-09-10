@@ -11,6 +11,8 @@
 - 😄 Pronouns: Bitcoiner
 - ⚡ Fun fact: Bitcoin is the thing that gives me hope that humanity will find a way to prosper
 
+- Signing key: [PGP public key](https://github.com/tibocin/tibocin/blob/main/tibocin%20signing%20key.txt)
+
 <!---
 tibocin/tibocin is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 You can click the Preview link to take a look at your changes.
