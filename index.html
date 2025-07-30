@@ -22,13 +22,61 @@
   <header class="terminal-header">
     <div class="status-bar">
       <span class="time" id="current-time">00:00</span>
-      <div class="status-icons">
-        <span class="signal">📶</span>
-        <span class="wifi">📡</span>
-        <span class="battery">🔋</span>
-      </div>
     </div>
   </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="avatar-container">
+      <div class="ascii-avatar" id="asciiAvatar">
+        <!-- ASCII art avatar will be generated here -->
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Bitcoin Status</h3>
+      <div class="status-icons">
+        <div class="status-item">
+          <span class="status-icon">⛓️</span>
+          <span class="status-text" id="blockHeight">Loading...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-icon">💰</span>
+          <span class="status-text" id="bitcoinPrice">Loading...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-icon">🌐</span>
+          <span class="status-text" id="nodeCount">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Quick Links</h3>
+      <div class="quick-links">
+        <a href="#" class="sidebar-link">
+          <span class="link-icon">[=]</span>
+          <span>Portfolio</span>
+        </a>
+        <a href="#" class="sidebar-link">
+          <span class="link-icon">[@]</span>
+          <span>Contact</span>
+        </a>
+        <a href="#" class="sidebar-link">
+          <span class="link-icon">[~]</span>
+          <span>Projects</span>
+        </a>
+        <a href="#" class="sidebar-link">
+          <span class="link-icon">[&]</span>
+          <span>AI Tools</span>
+        </a>
+        <a href="#" class="sidebar-link">
+          <span class="link-icon">[#]</span>
+          <span>Security</span>
+        </a>
+      </div>
+    </div>
+  </aside>
 
   <!-- Main content -->
   <main class="container">
@@ -202,7 +250,10 @@
     <div class="chat-container" id="chatContainer">
       <div class="chat-header">
         <div class="chat-title">Tibocin Bitcoin Bot</div>
-        <button class="chat-close" id="chatClose">×</button>
+        <div class="chat-controls">
+          <button class="chat-fullscreen" id="chatFullscreen" title="Toggle fullscreen">⛶</button>
+          <button class="chat-close" id="chatClose" title="Close chat">×</button>
+        </div>
       </div>
       <iframe src="https://tibocin-beep-boop.hf.space" class="chat-iframe" frameborder="0" width="100%"
         height="100%"></iframe>
@@ -210,6 +261,7 @@
   </div>
 
   <script src="script.js"></script>
+  <script src="avatar-compact.js"></script>
 </body>
 
 </html>

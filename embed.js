@@ -22,7 +22,10 @@
             <div class="tibocin-chat-container" id="tibocinChatContainer">
                 <div class="tibocin-chat-header">
                     <div class="tibocin-chat-title">Tibocin Bitcoin Bot</div>
-                    <button class="tibocin-chat-close" id="tibocinChatClose">×</button>
+                    <div class="tibocin-chat-controls">
+                        <button class="tibocin-chat-fullscreen" id="tibocinChatFullscreen" title="Toggle fullscreen">⛶</button>
+                        <button class="tibocin-chat-close" id="tibocinChatClose" title="Close chat">×</button>
+                    </div>
                 </div>
                 <iframe 
                     src="https://tibocin-beep-boop.hf.space"
@@ -90,6 +93,12 @@
             align-items: center;
         }
 
+        .tibocin-chat-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
         .tibocin-chat-title {
             color: #00ff00;
             font-weight: bold;
@@ -108,6 +117,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .tibocin-chat-fullscreen {
+            background: none;
+            border: none;
+            color: #00ff00;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .tibocin-chat-fullscreen:hover {
+            color: #39ff14;
+            transform: scale(1.1);
         }
 
         .tibocin-chat-close:hover {
@@ -152,6 +181,23 @@
             }
         }
 
+        /* Full-screen mode */
+        .tibocin-chat-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            z-index: 10001;
+        }
+
+        .tibocin-chat-container.fullscreen .tibocin-chat-iframe {
+            height: calc(100vh - 60px);
+        }
+
         @media (max-width: 768px) {
             .tibocin-chat-container {
                 width: calc(100vw - 40px);
@@ -159,6 +205,14 @@
                 right: 20px;
                 left: 20px;
                 bottom: 100px;
+            }
+            
+            .tibocin-chat-container.fullscreen {
+                width: 100vw;
+                height: 100vh;
+                right: 0;
+                left: 0;
+                bottom: 0;
             }
         }
     `;
@@ -179,7 +233,9 @@
             this.toggle = document.getElementById('tibocinChatToggle');
             this.container = document.getElementById('tibocinChatContainer');
             this.close = document.getElementById('tibocinChatClose');
+            this.fullscreen = document.getElementById('tibocinChatFullscreen');
             this.isOpen = false;
+            this.isFullscreen = false;
             this.init();
         }
 
@@ -194,10 +250,19 @@
                 this.closeChat();
             });
 
+            // Toggle fullscreen
+            this.fullscreen.addEventListener('click', () => {
+                this.toggleFullscreen();
+            });
+
             // Close on escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && this.isOpen) {
-                    this.closeChat();
+                    if (this.isFullscreen) {
+                        this.exitFullscreen();
+                    } else {
+                        this.closeChat();
+                    }
                 }
             });
 
@@ -239,6 +304,37 @@
         closeChat() {
             this.container.classList.remove('show');
             this.isOpen = false;
+            this.exitFullscreen();
+        }
+
+        toggleFullscreen() {
+            if (this.isFullscreen) {
+                this.exitFullscreen();
+            } else {
+                this.enterFullscreen();
+            }
+        }
+
+        enterFullscreen() {
+            this.container.classList.add('fullscreen');
+            this.isFullscreen = true;
+            this.fullscreen.textContent = '⛶';
+            this.fullscreen.title = 'Exit fullscreen';
+            
+            // Focus the iframe
+            setTimeout(() => {
+                const iframe = this.container.querySelector('iframe');
+                if (iframe) {
+                    iframe.focus();
+                }
+            }, 100);
+        }
+
+        exitFullscreen() {
+            this.container.classList.remove('fullscreen');
+            this.isFullscreen = false;
+            this.fullscreen.textContent = '⛶';
+            this.fullscreen.title = 'Toggle fullscreen';
         }
 
         // Public methods for external control
@@ -256,6 +352,20 @@
 
         hideNotification() {
             this.toggle.classList.remove('has-notification');
+        }
+
+        // Fullscreen methods
+        enterFullscreenMode() {
+            if (this.isOpen) {
+                this.enterFullscreen();
+            } else {
+                this.openChat();
+                setTimeout(() => this.enterFullscreen(), 300);
+            }
+        }
+
+        exitFullscreenMode() {
+            this.exitFullscreen();
         }
     }
 

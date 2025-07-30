@@ -7,6 +7,9 @@ A cypherpunk-styled personal website for Bitcoin developer and cypherpunk @tiboc
 - **Cypherpunk Aesthetic**: Green/black terminal-inspired design
 - **Interactive Elements**: Custom cursor, typing animations, glitch effects
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile
+- **Sidebar Navigation**: Fixed sidebar with ASCII art avatar and Bitcoin status
+- **ASCII Art Avatar**: Pixelated portrait with Omar Rayo-style striping in green theme
+- **Bitcoin Status**: Real-time block height, price, and node count display
 - **ASCII Art**: Bitcoin-themed ASCII art section
 - **Matrix Background**: Subtle matrix rain effect
 - **Particle System**: Floating green particles for ambiance
@@ -182,6 +185,31 @@ The website includes:
 - **Content Security Policy**: Ready for implementation
 - **No External Dependencies**: Self-contained (except fonts)
 
+## 🤖 ASCII Art Avatar
+
+### Features
+
+- **Pixelated Design**: Based on your cyberpunk portrait with pixelated aesthetic
+- **Omar Rayo-Style Striping**: Geometric striping patterns using different green shades
+- **Green Theme**: Uses the cypherpunk color palette (primary, secondary, dark, terminal greens)
+- **Multiple Formats**: Available as ASCII art, SVG, and PNG
+- **Real-time Generation**: Dynamic rendering with glow effects
+
+### Avatar Files
+
+- **`avatar.js`**: JavaScript for generating ASCII art avatar and Bitcoin status
+- **`avatar.svg`**: Vector version with geometric elements and glow effects
+- **`avatar-generator.html`**: Tool to generate and download different formats
+- **`ascii-art.txt`**: Source ASCII art file
+
+### Bitcoin Status Integration
+
+The sidebar displays real-time Bitcoin data:
+
+- **Block Height**: Current Bitcoin block number
+- **Price**: Live Bitcoin price in USD
+- **Node Count**: Estimated number of Bitcoin nodes
+
 ## 💬 Chat Integration
 
 ### Slide-in Widget
@@ -190,7 +218,7 @@ The website includes a slide-in chat widget that embeds your Bitcoin verificatio
 
 - **Location**: Bottom-right corner of the page
 - **Trigger**: Click the 🤖 button
-- **Features**: Responsive design, keyboard shortcuts, notification effects
+- **Features**: Responsive design, keyboard shortcuts, notification effects, full-screen mode
 
 ### Dedicated Chat Page
 
@@ -219,6 +247,12 @@ window.tibocinChatWidget.hide();
 
 // Show notification
 window.tibocinChatWidget.showNotification();
+
+// Enter full-screen mode
+window.tibocinChatWidget.enterFullscreenMode();
+
+// Exit full-screen mode
+window.tibocinChatWidget.exitFullscreenMode();
 ```
 
 ## 🎨 Customization Ideas

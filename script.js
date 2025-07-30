@@ -127,7 +127,7 @@ class GlitchEffect {
     }
 
     init() {
-        const glitchElements = document.querySelectorAll('.logo, .section-title');
+        const glitchElements = document.querySelectorAll('.logo');
         
         glitchElements.forEach(element => {
             element.addEventListener('mouseenter', () => {
@@ -359,7 +359,9 @@ class ChatWidget {
         this.toggle = document.getElementById('chatToggle');
         this.container = document.getElementById('chatContainer');
         this.close = document.getElementById('chatClose');
+        this.fullscreen = document.getElementById('chatFullscreen');
         this.isOpen = false;
+        this.isFullscreen = false;
         this.init();
     }
 
@@ -374,10 +376,19 @@ class ChatWidget {
             this.closeChat();
         });
 
+        // Toggle fullscreen
+        this.fullscreen.addEventListener('click', () => {
+            this.toggleFullscreen();
+        });
+
         // Close on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isOpen) {
-                this.closeChat();
+                if (this.isFullscreen) {
+                    this.exitFullscreen();
+                } else {
+                    this.closeChat();
+                }
             }
         });
 
@@ -419,6 +430,37 @@ class ChatWidget {
     closeChat() {
         this.container.classList.remove('show');
         this.isOpen = false;
+        this.exitFullscreen();
+    }
+
+    toggleFullscreen() {
+        if (this.isFullscreen) {
+            this.exitFullscreen();
+        } else {
+            this.enterFullscreen();
+        }
+    }
+
+    enterFullscreen() {
+        this.container.classList.add('fullscreen');
+        this.isFullscreen = true;
+        this.fullscreen.textContent = '⛶';
+        this.fullscreen.title = 'Exit fullscreen';
+        
+        // Focus the iframe
+        setTimeout(() => {
+            const iframe = this.container.querySelector('iframe');
+            if (iframe) {
+                iframe.focus();
+            }
+        }, 100);
+    }
+
+    exitFullscreen() {
+        this.container.classList.remove('fullscreen');
+        this.isFullscreen = false;
+        this.fullscreen.textContent = '⛶';
+        this.fullscreen.title = 'Toggle fullscreen';
     }
 
     // Method to show notification
@@ -429,6 +471,21 @@ class ChatWidget {
     // Method to hide notification
     hideNotification() {
         this.toggle.classList.remove('has-notification');
+    }
+
+    // Method to enter fullscreen programmatically
+    enterFullscreenMode() {
+        if (this.isOpen) {
+            this.enterFullscreen();
+        } else {
+            this.openChat();
+            setTimeout(() => this.enterFullscreen(), 300);
+        }
+    }
+
+    // Method to exit fullscreen programmatically
+    exitFullscreenMode() {
+        this.exitFullscreen();
     }
 }
 
