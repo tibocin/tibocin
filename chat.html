@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat with Tibocin - Bitcoin Verification Bot</title>
+  <meta name="description"
+    content="Chat with Tibocin's Bitcoin verification bot. Verify Bitcoin signatures and prove address ownership securely.">
+  <link rel="icon" type="image/x-icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700;900&display=swap"
+    rel="stylesheet">
+  <style>
+    /* CSS Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Custom Properties */
+    :root {
+      --primary-green: #00ff00;
+      --secondary-green: #00cc00;
+      --dark-green: #006600;
+      --terminal-green: #39ff14;
+      --background-black: #000000;
+      --dark-gray: #1a1a1a;
+      --medium-gray: #333333;
+      --light-gray: #666666;
+      --white: #ffffff;
+      --glow-green: rgba(0, 255, 0, 0.3);
+      --glow-dark: rgba(0, 0, 0, 0.8);
+    }
+
+    /* Base Styles */
+    body {
+      background-color: var(--background-black);
+      color: var(--primary-green);
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      line-height: 1.6;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background-color: var(--dark-gray);
+      border-bottom: 2px solid var(--primary-green);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 20px var(--glow-green);
+    }
+
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--primary-green);
+      text-shadow: 0 0 15px var(--glow-green);
+      text-decoration: none;
+    }
+
+    .logo:hover {
+      color: var(--terminal-green);
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--primary-green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .back-link {
+      color: var(--secondary-green);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: var(--primary-green);
+      text-shadow: 0 0 10px var(--glow-green);
+    }
+
+    /* Main Chat Container */
+    .chat-container {
+      height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background-color: var(--dark-gray);
+      padding: 20px;
+      border-bottom: 1px solid var(--primary-green);
+      text-align: center;
+    }
+
+    .chat-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-green);
+      text-shadow: 0 0 15px var(--glow-green);
+      margin-bottom: 10px;
+    }
+
+    .chat-subtitle {
+      color: var(--secondary-green);
+      font-size: 1rem;
+    }
+
+    .chat-iframe-container {
+      flex: 1;
+      position: relative;
+      background: var(--background-black);
+    }
+
+    .chat-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: var(--background-black);
+    }
+
+    /* Loading State */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: var(--primary-green);
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--dark-gray);
+      border-top: 3px solid var(--primary-green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    /* Footer */
+    .footer {
+      background-color: var(--dark-gray);
+      border-top: 1px solid var(--primary-green);
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--secondary-green);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header {
+        padding: 10px 15px;
+      }
+
+      .logo {
+        font-size: 1.2rem;
+      }
+
+      .header-info {
+        gap: 10px;
+      }
+
+      .chat-title {
+        font-size: 1.4rem;
+      }
+
+      .chat-subtitle {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Matrix background effect */
+    .matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Matrix background -->
+  <canvas class="matrix-bg" id="matrixBg"></canvas>
+
+  <!-- Header -->
+  <header class="header">
+    <a href="/" class="logo">tibocin</a>
+    <div class="header-info">
+      <div class="status-indicator">
+        <div class="status-dot"></div>
+        <span>Bot Online</span>
+      </div>
+      <a href="/" class="back-link">← Back to Home</a>
+    </div>
+  </header>
+
+  <!-- Main Chat Container -->
+  <main class="chat-container">
+    <div class="chat-header">
+      <h1 class="chat-title">Bitcoin Verification Bot</h1>
+      <p class="chat-subtitle">Verify Bitcoin signatures and prove address ownership securely</p>
+    </div>
+
+    <div class="chat-iframe-container">
+      <!-- Loading state -->
+      <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading Tibocin Bot...</p>
+      </div>
+
+      <!-- Chat iframe -->
+      <iframe src="https://tibocin-beep-boop.hf.space" class="chat-iframe" id="chatIframe" frameborder="0"
+        onload="hideLoading()"></iframe>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Built with ❤️ for the Bitcoin community | Powered by LangGraph & Hugging Face</p>
+  </footer>
+
+  <script>
+    // Matrix background effect
+    function initMatrix() {
+      const canvas = document.getElementById('matrixBg');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+      const matrixArray = matrix.split("");
+
+      const fontSize = 10;
+      const columns = canvas.width / fontSize;
+      const drops = [];
+
+      for (let x = 0; x < columns; x++) {
+        drops[x] = 1;
+      }
+
+      function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#0F0';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+      }
+
+      setInterval(draw, 35);
+
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    }
+
+    // Hide loading when iframe loads
+    function hideLoading() {
+      const loading = document.getElementById('loading');
+      const iframe = document.getElementById('chatIframe');
+
+      if (loading && iframe) {
+        loading.style.display = 'none';
+        iframe.style.opacity = '1';
+      }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      initMatrix();
+
+      // Hide loading after 3 seconds as fallback
+      setTimeout(() => {
+        hideLoading();
+      }, 3000);
+    });
+
+    // Handle iframe load errors
+    window.addEventListener('error', (e) => {
+      if (e.target.tagName === 'IFRAME') {
+        hideLoading();
+      }
+    });
+  </script>
+</body>
+
+</html>
