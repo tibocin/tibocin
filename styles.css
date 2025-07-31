@@ -111,17 +111,14 @@ body {
     text-align: center;
     white-space: pre;
     overflow: hidden;
-    animation: avatarGlow 3s ease-in-out infinite alternate;
+    /* animation: avatarGlow 3s ease-in-out infinite alternate; */ /* Disabled for performance */
     max-width: 220px;
     max-height: 120px;
     margin: 0 auto;
     transform: scale(0.85);
 }
 
-@keyframes avatarGlow {
-    0% { text-shadow: 0 0 5px var(--primary-green); }
-    100% { text-shadow: 0 0 15px var(--terminal-green), 0 0 25px var(--primary-green); }
-}
+
 
 .sidebar-section {
     margin-bottom: 30px;
@@ -563,13 +560,40 @@ body {
     position: fixed;
     width: 20px;
     height: 20px;
-    background-color: var(--primary-green);
+    background-color: #ff6600;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
     mix-blend-mode: difference;
-    transition: transform 0.1s ease;
-    box-shadow: 0 0 10px var(--glow-green);
+    transition: none; /* Remove transition for better performance */
+    box-shadow: 0 0 8px #ff6600;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    display: block !important; /* Force display */
+}
+
+/* Optimize custom cursor on mobile for better performance */
+@media (max-width: 768px) {
+    .cursor {
+        width: 15px;
+        height: 15px;
+        box-shadow: 0 0 5px var(--glow-green);
+    }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    .cursor {
+        transition: none;
+        animation: none;
+    }
+    
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* Responsive Design */
@@ -707,35 +731,7 @@ button:focus {
     }
 }
 
-.pulse {
-    animation: pulse 2s infinite;
-}
 
-/* Glitch Effect */
-@keyframes glitch {
-    0% {
-        transform: translate(0);
-    }
-    20% {
-        transform: translate(-2px, 2px);
-    }
-    40% {
-        transform: translate(-2px, -2px);
-    }
-    60% {
-        transform: translate(2px, 2px);
-    }
-    80% {
-        transform: translate(2px, -2px);
-    }
-    100% {
-        transform: translate(0);
-    }
-}
-
-.glitch {
-    animation: glitch 0.3s infinite;
-}
 
 /* Chat Widget Styles */
 .chat-widget {

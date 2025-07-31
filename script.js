@@ -8,13 +8,22 @@
 class CustomCursor {
     constructor() {
         this.cursor = document.getElementById('cursor');
+        this.isMoving = false;
+        this.rafId = null;
         this.init();
     }
 
     init() {
+        // Throttled mouse movement for better performance
+        let ticking = false;
         document.addEventListener('mousemove', (e) => {
-            this.cursor.style.left = e.clientX + 'px';
-            this.cursor.style.top = e.clientY + 'px';
+            if (!ticking) {
+                ticking = true;
+                requestAnimationFrame(() => {
+                    this.updateCursorPosition(e.clientX, e.clientY);
+                    ticking = false;
+                });
+            }
         });
 
         // Add hover effects for interactive elements
@@ -22,21 +31,26 @@ class CustomCursor {
         
         interactiveElements.forEach(element => {
             element.addEventListener('mouseenter', () => {
-                this.cursor.style.transform = 'scale(1.5)';
+                this.cursor.style.transform = 'scale(1.3) translateZ(0)';
                 this.cursor.style.background = 'var(--terminal-green)';
             });
 
             element.addEventListener('mouseleave', () => {
-                this.cursor.style.transform = 'scale(1)';
+                this.cursor.style.transform = 'scale(1) translateZ(0)';
                 this.cursor.style.background = 'var(--primary-green)';
             });
         });
 
-        // Hide cursor on mobile devices
+        // Optimize cursor on mobile devices
         if (window.innerWidth <= 768) {
-            this.cursor.style.display = 'none';
-            document.body.style.cursor = 'auto';
+            this.cursor.style.width = '15px';
+            this.cursor.style.height = '15px';
         }
+    }
+
+    updateCursorPosition(x, y) {
+        // Use transform3d for hardware acceleration
+        this.cursor.style.transform = `translate3d(${x - 10}px, ${y - 10}px, 0)`;
     }
 }
 
@@ -94,218 +108,7 @@ class TypingAnimation {
     }
 }
 
-// Scroll animations
-class ScrollAnimations {
-    constructor() {
-        this.init();
-    }
 
-    init() {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        const animatedElements = document.querySelectorAll('.project-card, .skill-category, .contact-item');
-        animatedElements.forEach(el => observer.observe(el));
-    }
-}
-
-// Glitch effect functionality
-class GlitchEffect {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        const glitchElements = document.querySelectorAll('.logo');
-        
-        glitchElements.forEach(element => {
-            element.addEventListener('mouseenter', () => {
-                element.classList.add('glitch');
-            });
-
-            element.addEventListener('mouseleave', () => {
-                element.classList.remove('glitch');
-            });
-        });
-    }
-}
-
-// Terminal-style effects
-class TerminalEffects {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        // Add terminal startup effect
-        this.addTerminalStartup();
-        
-        // Add matrix-style background effect
-        this.addMatrixEffect();
-    }
-
-    addTerminalStartup() {
-        const body = document.body;
-        body.style.opacity = '0';
-        
-        setTimeout(() => {
-            body.style.transition = 'opacity 1s ease-in-out';
-            body.style.opacity = '1';
-        }, 100);
-    }
-
-    addMatrixEffect() {
-        // Create matrix rain effect in background
-        const canvas = document.createElement('canvas');
-        canvas.style.position = 'fixed';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        canvas.style.zIndex = '-1';
-        canvas.style.opacity = '0.1';
-        canvas.style.pointerEvents = 'none';
-        
-        document.body.appendChild(canvas);
-        
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-        const matrixArray = matrix.split("");
-        
-        const fontSize = 10;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        
-        for (let x = 0; x < columns; x++) {
-            drops[x] = 1;
-        }
-        
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#0F0';
-            ctx.font = fontSize + 'px monospace';
-            
-            for (let i = 0; i < drops.length; i++) {
-                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        
-        setInterval(draw, 35);
-        
-        // Resize canvas on window resize
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-    }
-}
-
-// Particle system for background
-class ParticleSystem {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        const canvas = document.createElement('canvas');
-        canvas.style.position = 'fixed';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        canvas.style.zIndex = '-1';
-        canvas.style.opacity = '0.3';
-        canvas.style.pointerEvents = 'none';
-        
-        document.body.appendChild(canvas);
-        
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const particles = [];
-        const particleCount = 50;
-        
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 2 + 1;
-                this.life = Math.random() * 100 + 50;
-            }
-            
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life--;
-                
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-                
-                if (this.life <= 0) {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.life = Math.random() * 100 + 50;
-                }
-            }
-            
-            draw() {
-                ctx.fillStyle = `rgba(0, 255, 0, ${this.life / 150})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-        
-        // Create particles
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-        
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            
-            requestAnimationFrame(animate);
-        }
-        
-        animate();
-        
-        // Resize canvas on window resize
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-    }
-}
 
 // Keyboard shortcuts
 class KeyboardShortcuts {
@@ -494,10 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
     new CustomCursor();
     new TimeDisplay();
     new TypingAnimation();
-    new ScrollAnimations();
-    new GlitchEffect();
-    new TerminalEffects();
-    new ParticleSystem();
     new KeyboardShortcuts();
     new SmoothScrolling();
     new ChatWidget();
@@ -506,18 +305,4 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🔗 Built with ❤️ for the Bitcoin community');
 });
 
-// Add CSS for scroll animations
-const style = document.createElement('style');
-style.textContent = `
-    .project-card, .skill-category, .contact-item {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.6s ease-out;
-    }
-    
-    .project-card.animate-in, .skill-category.animate-in, .contact-item.animate-in {
-        opacity: 1;
-        transform: translateY(0);
-    }
-`;
-document.head.appendChild(style); 
+ 
