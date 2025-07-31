@@ -17,6 +17,54 @@ import * as bs58 from 'bs58';
 import * as bech32 from 'bech32';
 import { Verifier } from 'bip322-js';
 
+// Custom cursor functionality
+class CustomCursor {
+  constructor() {
+    this.cursor = document.getElementById('cursor');
+    this.init();
+  }
+
+  init() {
+    // Throttled mouse movement for better performance
+    let ticking = false;
+    document.addEventListener('mousemove', (e) => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          this.updateCursorPosition(e.clientX, e.clientY);
+          ticking = false;
+        });
+      }
+    });
+
+    // Add hover effects for interactive elements
+    const interactiveElements = document.querySelectorAll('a, button, .form-input, .verify-button');
+    
+    interactiveElements.forEach(element => {
+      element.addEventListener('mouseenter', () => {
+        this.cursor.style.transform = 'scale(1.3) translateZ(0)';
+        this.cursor.style.background = 'var(--terminal-green)';
+      });
+
+      element.addEventListener('mouseleave', () => {
+        this.cursor.style.transform = 'scale(1) translateZ(0)';
+        this.cursor.style.background = 'var(--primary-green)';
+      });
+    });
+
+    // Optimize cursor on mobile devices
+    if (window.innerWidth <= 768) {
+      this.cursor.style.width = '15px';
+      this.cursor.style.height = '15px';
+    }
+  }
+
+  updateCursorPosition(x, y) {
+    // Use transform3d for hardware acceleration
+    this.cursor.style.transform = `translate3d(${x - 10}px, ${y - 10}px, 0)`;
+  }
+}
+
 // Bitcoin Message Verification Class
 class BitcoinVerifier {
   constructor() {
@@ -477,6 +525,7 @@ class BitcoinVerifier {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+  new CustomCursor();
   new BitcoinVerifier();
 });
 
