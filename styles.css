@@ -159,6 +159,10 @@ body {
     font-size: 12px;
     color: var(--terminal-green);
     font-family: 'Courier New', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
 }
 
 .quick-links {
