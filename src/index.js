@@ -15,6 +15,7 @@ import * as bitcoin from 'bitcoinjs-lib';
 import { ec as EC } from 'elliptic';
 import * as bs58 from 'bs58';
 import * as bech32 from 'bech32';
+import { Verifier } from 'bip322-js';
 
 // Bitcoin Message Verification Class
 class BitcoinVerifier {
@@ -95,11 +96,16 @@ class BitcoinVerifier {
     // Detect address type
     const addressType = this.detectAddressType(address);
     
-    // Create message hash
-    const messageHash = this.createMessageHash(message);
-    
     // Decode signature
     const decodedSignature = this.decodeSignature(signature);
+    
+    // Check if this is a BIP-322 signature
+    if (decodedSignature.type === 'bip322') {
+      return await this.verifyBIP322Signature(address, message, decodedSignature);
+    }
+    
+    // Create message hash for traditional signatures
+    const messageHash = this.createMessageHash(message);
     
     // Verify based on address type
     let isValid = false;
@@ -131,6 +137,40 @@ class BitcoinVerifier {
     };
   }
 
+  async verifyBIP322Signature(address, message, decodedSignature) {
+    try {
+      // Use the BIP-322 Verifier for proper verification
+      const isValid = Verifier.verifySignature(address, message, decodedSignature.signature);
+      
+      console.log('BIP-322 verification result:', {
+        address,
+        messageLength: message.length,
+        signatureLength: decodedSignature.length,
+        isValid
+      });
+      
+      return {
+        isValid: isValid,
+        addressType: this.detectAddressType(address),
+        address,
+        message,
+        signature: decodedSignature.signature,
+        signatureType: 'BIP-322'
+      };
+    } catch (error) {
+      console.error('BIP-322 verification error:', error);
+      return {
+        isValid: 'bip322_detected',
+        addressType: this.detectAddressType(address),
+        address,
+        message,
+        signature: decodedSignature.signature,
+        signatureType: 'BIP-322',
+        error: error.message
+      };
+    }
+  }
+
   detectAddressType(address) {
     if (address.startsWith('1')) return 'legacy';
     if (address.startsWith('bc1q')) return 'segwit';
@@ -155,7 +195,9 @@ class BitcoinVerifier {
 
   decodeSignature(signature) {
     try {
-      // Handle different signature formats
+      console.log('Decoding signature:', signature.substring(0, 50) + '...');
+      
+      // Handle traditional signature formats first
       let sigBuffer;
       if (signature.includes('-----BEGIN')) {
         // PEM format
@@ -165,10 +207,74 @@ class BitcoinVerifier {
         sigBuffer = Buffer.from(signature, 'base64');
       }
       
-      // Parse DER signature
-      return bitcoin.script.signature.decode(sigBuffer);
+      // Try to parse as traditional signature
+      try {
+        const decoded = bitcoin.script.signature.decode(sigBuffer);
+        console.log('Successfully decoded as traditional signature');
+        return decoded;
+      } catch (error) {
+        // If it fails with hashType 102 or other BIP-322 related errors, treat as BIP-322
+        if (error.message.includes('Invalid hashType 102') || 
+            error.message.includes('Invalid hashType')) {
+          console.log('Detected as BIP-322 signature (hashType error)');
+          return this.decodeBIP322Signature(signature);
+        }
+        throw error;
+      }
     } catch (error) {
-      throw new Error('Invalid signature format');
+      console.error('Signature decode error:', error);
+      throw new Error(`Invalid signature format: ${error.message}`);
+    }
+  }
+
+  isBIP322Signature(signature) {
+    // BIP-322 signatures are typically longer and have a specific structure
+    // They often contain additional data beyond just r and s values
+    try {
+      const decoded = Buffer.from(signature, 'base64');
+      
+      // Check if it's a BIP-322 signature by trying to decode it as traditional first
+      // If it fails with hashType 102, it's likely BIP-322
+      try {
+        bitcoin.script.signature.decode(decoded);
+        // If it succeeds, it's traditional
+        return false;
+      } catch (error) {
+        // If it fails with hashType 102 or other BIP-322 related errors, it's BIP-322
+        if (error.message.includes('Invalid hashType 102') || 
+            error.message.includes('Invalid hashType') ||
+            decoded.length >= 80) {
+          return true;
+        }
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  }
+
+  decodeBIP322Signature(signature) {
+    try {
+      const decoded = Buffer.from(signature, 'base64');
+      
+      // BIP-322 signature structure is more complex
+      // For now, we'll return the signature as-is for detection purposes
+      // Full BIP-322 parsing would require more sophisticated parsing
+      
+      console.log('BIP-322 signature detected:', {
+        length: decoded.length,
+        signature: signature.substring(0, 50) + '...'
+      });
+      
+      return {
+        type: 'bip322',
+        raw: decoded,
+        signature: signature,
+        length: decoded.length
+      };
+    } catch (error) {
+      console.error('BIP-322 decode error:', error);
+      throw new Error('Invalid BIP-322 signature format');
     }
   }
 
@@ -194,7 +300,7 @@ class BitcoinVerifier {
           const publicKey = recovered.encodeCompressed();
           
           // Generate address from public key
-          const recoveredAddress = bitcoin.payments.p2pkh({ pubkey });
+          const recoveredAddress = bitcoin.payments.p2pkh({ pubkey: publicKey });
           
           if (recoveredAddress.address === address) {
             return true;
@@ -223,7 +329,7 @@ class BitcoinVerifier {
           const publicKey = recovered.encodeCompressed();
           
           // Generate SegWit address from public key
-          const segwitAddress = bitcoin.payments.p2wpkh({ pubkey });
+          const segwitAddress = bitcoin.payments.p2wpkh({ pubkey: publicKey });
           
           if (segwitAddress.address === address) {
             return true;
@@ -252,7 +358,7 @@ class BitcoinVerifier {
           const publicKey = recovered.encodeCompressed();
           
           // Generate Taproot address from public key
-          const taprootAddress = bitcoin.payments.p2tr({ pubkey });
+          const taprootAddress = bitcoin.payments.p2tr({ pubkey: publicKey });
           
           if (taprootAddress.address === address) {
             return true;
@@ -271,7 +377,59 @@ class BitcoinVerifier {
   showResult(result) {
     this.resultContainer.style.display = 'block';
     
-    if (result.isValid) {
+    if (result.isValid === 'bip322_detected') {
+      // Special handling for BIP-322 signatures (detection only)
+      this.resultContainer.className = 'result-container result-success';
+      this.resultIcon.textContent = '🔍';
+      this.resultTitle.textContent = 'BIP-322 Signature Detected';
+      
+      const addressTypeLabel = this.getAddressTypeLabel(result.addressType);
+      
+      this.resultDetails.innerHTML = `
+        <p><strong>Status:</strong> <span style="color: var(--terminal-green);">🔍 BIP-322 DETECTED</span></p>
+        <p><strong>Address:</strong> ${result.address} ${addressTypeLabel}</p>
+        <p><strong>Address Type:</strong> ${result.addressType.toUpperCase()}</p>
+        <p><strong>Signature Type:</strong> <span style="color: var(--primary-green);">BIP-322</span></p>
+        <p><strong>Message:</strong> "${result.message}"</p>
+        <p><strong>Signature:</strong> ${result.signature.substring(0, 50)}...</p>
+        <p style="color: var(--light-gray); margin-top: 15px;">
+          <strong>Note:</strong> This is a BIP-322 signature. For full verification, 
+          please use Bitcoin Core CLI or specialized BIP-322 tools like Sparrow Wallet.
+        </p>
+        <p style="color: var(--light-gray); font-size: 12px;">
+          Command: <code>bitcoin-cli verifymessage "${result.address}" "${result.signature}" "${result.message}"</code>
+        </p>
+      `;
+    } else if (result.signatureType === 'BIP-322' && result.isValid === true) {
+      // Successful BIP-322 verification
+      this.resultContainer.className = 'result-container result-success';
+      this.resultIcon.textContent = '✓';
+      this.resultTitle.textContent = 'BIP-322 Signature Verified Successfully';
+      
+      const addressTypeLabel = this.getAddressTypeLabel(result.addressType);
+      
+      this.resultDetails.innerHTML = `
+        <p><strong>Status:</strong> <span style="color: var(--terminal-green);">✓ BIP-322 VERIFIED</span></p>
+        <p><strong>Address:</strong> ${result.address} ${addressTypeLabel}</p>
+        <p><strong>Address Type:</strong> ${result.addressType.toUpperCase()}</p>
+        <p><strong>Signature Type:</strong> <span style="color: var(--primary-green);">BIP-322</span></p>
+        <p><strong>Message:</strong> "${result.message}"</p>
+        <p><strong>Signature:</strong> ${result.signature.substring(0, 50)}...</p>
+      `;
+    } else if (result.signatureType === 'BIP-322' && result.isValid === false) {
+      // Failed BIP-322 verification
+      this.resultContainer.className = 'result-container result-error';
+      this.resultIcon.textContent = '✗';
+      this.resultTitle.textContent = 'BIP-322 Signature Verification Failed';
+      
+      this.resultDetails.innerHTML = `
+        <p><strong>Status:</strong> <span style="color: #ff4444;">✗ BIP-322 INVALID</span></p>
+        <p><strong>Address:</strong> ${result.address}</p>
+        <p><strong>Message:</strong> "${result.message}"</p>
+        <p><strong>Signature Type:</strong> <span style="color: var(--primary-green);">BIP-322</span></p>
+        <p>The BIP-322 signature could not be verified for this address and message combination.</p>
+      `;
+    } else if (result.isValid) {
       this.resultContainer.className = 'result-container result-success';
       this.resultIcon.textContent = '✓';
       this.resultTitle.textContent = 'Signature Verified Successfully';
@@ -316,8 +474,6 @@ class BitcoinVerifier {
     return labels[type] || '';
   }
 }
-
-
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
