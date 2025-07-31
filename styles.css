@@ -559,32 +559,12 @@ body {
     font-size: 0.9rem;
 }
 
-/* Custom Cursor */
+/* Custom Cursor - DISABLED */
 .cursor {
-    position: fixed;
-    width: 20px;
-    height: 20px;
-    background-color: #ff6600;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    mix-blend-mode: difference;
-    transition: none; /* Remove transition for better performance */
-    box-shadow: 0 0 8px #ff6600;
-    will-change: transform;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    display: block !important; /* Force display */
+    display: none !important;
 }
 
-/* Optimize custom cursor on mobile for better performance */
-@media (max-width: 768px) {
-    .cursor {
-        width: 15px;
-        height: 15px;
-        box-shadow: 0 0 5px var(--glow-green);
-    }
-}
+
 
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {

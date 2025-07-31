@@ -49,31 +49,12 @@ body {
   color: var(--primary-green);
 }
 
-/* Custom Cursor */
+/* Custom Cursor - DISABLED */
 .cursor {
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  background-color: var(--primary-green);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: difference;
-  transition: none;
-  box-shadow: 0 0 8px var(--primary-green);
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  display: block !important;
+  display: none !important;
 }
 
-@media (max-width: 768px) {
-  .cursor {
-    width: 15px;
-    height: 15px;
-    box-shadow: 0 0 5px var(--glow-green);
-  }
-}
+
 
 /* Typography */
 .section-title {

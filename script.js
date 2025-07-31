@@ -4,53 +4,19 @@
 // Related components: HTML structure, CSS styling
 // Tags: javascript, interactive, cursor, animations, terminal
 
-// Custom cursor functionality
+// Custom cursor functionality - DISABLED
 class CustomCursor {
     constructor() {
-        this.cursor = document.getElementById('cursor');
-        this.isMoving = false;
-        this.rafId = null;
-        this.init();
+        // Cursor functionality disabled - element removed from HTML
+        console.log('Custom cursor disabled - element removed from HTML');
     }
 
     init() {
-        // Throttled mouse movement for better performance
-        let ticking = false;
-        document.addEventListener('mousemove', (e) => {
-            if (!ticking) {
-                ticking = true;
-                requestAnimationFrame(() => {
-                    this.updateCursorPosition(e.clientX, e.clientY);
-                    ticking = false;
-                });
-            }
-        });
-
-        // Add hover effects for interactive elements
-        const interactiveElements = document.querySelectorAll('a, button, .project-card, .skill-category, .contact-item');
-        
-        interactiveElements.forEach(element => {
-            element.addEventListener('mouseenter', () => {
-                this.cursor.style.transform = 'scale(1.3) translateZ(0)';
-                this.cursor.style.background = 'var(--terminal-green)';
-            });
-
-            element.addEventListener('mouseleave', () => {
-                this.cursor.style.transform = 'scale(1) translateZ(0)';
-                this.cursor.style.background = 'var(--primary-green)';
-            });
-        });
-
-        // Optimize cursor on mobile devices
-        if (window.innerWidth <= 768) {
-            this.cursor.style.width = '15px';
-            this.cursor.style.height = '15px';
-        }
+        // No initialization needed
     }
 
     updateCursorPosition(x, y) {
-        // Use transform3d for hardware acceleration
-        this.cursor.style.transform = `translate3d(${x - 10}px, ${y - 10}px, 0)`;
+        // No cursor to update
     }
 }
 
