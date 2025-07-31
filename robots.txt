@@ -3,6 +3,6 @@ Allow: /
 
 # Sitemap location (add when you create one)
 # Sitemap: https://tibocin.xyz/sitemap.xml
-
+ 
 # Crawl delay (optional)
 Crawl-delay: 1 
