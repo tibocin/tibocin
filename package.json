@@ -1,0 +1,43 @@
+{
+  "name": "tibocin-bitcoin-verifier",
+  "version": "1.0.0",
+  "description": "Bitcoin message verification tool with full address type support",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "build:simple": "webpack --config webpack.config.simple.js --mode production",
+    "dev:simple": "webpack serve --config webpack.config.simple.js --mode development",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "bitcoin",
+    "verification",
+    "cryptography",
+    "taproot",
+    "segwit"
+  ],
+  "author": "Tibocin",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "html-webpack-plugin": "^5.5.3",
+    "css-loader": "^6.8.1",
+    "style-loader": "^3.3.3",
+    "file-loader": "^6.2.0",
+    "copy-webpack-plugin": "^11.0.0"
+  },
+  "dependencies": {
+    "bitcoinjs-lib": "^6.1.5",
+    "elliptic": "^6.5.4",
+    "bs58": "^5.0.0",
+    "bech32": "^2.0.0",
+    "crypto-browserify": "^3.12.0",
+    "stream-browserify": "^3.0.0",
+    "buffer": "^6.0.3",
+    "process": "^0.11.10"
+  }
+}

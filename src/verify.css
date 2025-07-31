@@ -1,0 +1,195 @@
+/* Bitcoin Verification Tool Styles */
+/* Purpose: Dedicated styles for the verification tool */
+/* Related components: verify.html, index.js */
+/* Tags: css, verification, bitcoin, cypherpunk */
+
+.verify-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.verify-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.verify-form {
+  background: var(--dark-gray);
+  border: 2px solid var(--primary-green);
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 20px var(--glow-green);
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-label {
+  display: block;
+  color: var(--primary-green);
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  background: var(--background-black);
+  border: 1px solid var(--primary-green);
+  border-radius: 5px;
+  color: var(--terminal-green);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 10px var(--glow-green);
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.verify-button {
+  background: var(--primary-green);
+  color: var(--background-black);
+  border: none;
+  padding: 15px 30px;
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.verify-button:hover {
+  background: var(--terminal-green);
+  box-shadow: 0 0 15px var(--glow-green);
+  transform: translateY(-2px);
+}
+
+.verify-button:disabled {
+  background: var(--medium-gray);
+  color: var(--light-gray);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.result-container {
+  background: var(--dark-gray);
+  border: 2px solid var(--primary-green);
+  border-radius: 10px;
+  padding: 25px;
+  margin-top: 30px;
+  display: none;
+}
+
+.result-success {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+}
+
+.result-error {
+  border-color: #ff4444;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+}
+
+.result-icon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.result-success .result-icon {
+  color: var(--terminal-green);
+}
+
+.result-error .result-icon {
+  color: #ff4444;
+}
+
+.result-details {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.address-type {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.address-type.legacy {
+  background: #ff6600;
+  color: black;
+}
+
+.address-type.segwit {
+  background: #0066ff;
+  color: white;
+}
+
+.address-type.taproot {
+  background: #6600ff;
+  color: white;
+}
+
+.back-link {
+  display: inline-block;
+  color: var(--terminal-green);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.back-link:hover {
+  color: var(--primary-green);
+  text-shadow: 0 0 10px var(--glow-green);
+}
+
+.info-box {
+  background: var(--medium-gray);
+  border: 1px solid var(--primary-green);
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.info-box h3 {
+  color: var(--primary-green);
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.info-box ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.info-box li {
+  margin: 5px 0;
+} 

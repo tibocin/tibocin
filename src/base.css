@@ -1,0 +1,123 @@
+/* Base Cypherpunk Styles for Bitcoin Verification Tool */
+/* Purpose: Essential styling variables and base styles */
+/* Related components: verify.css, index.html */
+/* Tags: css, cypherpunk, base, variables */
+
+:root {
+  --background-black: #0a0a0a;
+  --dark-gray: #1a1a1a;
+  --medium-gray: #2a2a2a;
+  --light-gray: #888888;
+  --primary-green: #00ff41;
+  --terminal-green: #39ff14;
+  --glow-green: rgba(0, 255, 65, 0.3);
+  --secondary-green: #00cc33;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background-black);
+  color: var(--terminal-green);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Terminal Header */
+.terminal-header {
+  background: var(--dark-gray);
+  border-bottom: 2px solid var(--primary-green);
+  padding: 10px 20px;
+  box-shadow: 0 2px 10px var(--glow-green);
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: var(--terminal-green);
+}
+
+.time {
+  font-weight: bold;
+  color: var(--primary-green);
+}
+
+/* Custom Cursor */
+.cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  background-color: #ff6600;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  transition: none;
+  box-shadow: 0 0 8px #ff6600;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  display: block !important;
+}
+
+@media (max-width: 768px) {
+  .cursor {
+    width: 15px;
+    height: 15px;
+    box-shadow: 0 0 5px var(--glow-green);
+  }
+}
+
+/* Typography */
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--primary-green);
+  text-shadow: 0 0 20px var(--glow-green);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.tagline {
+  font-size: 1.2rem;
+  color: var(--light-gray);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-green);
+}
+
+/* Selection Styling */
+::selection {
+  background: var(--primary-green);
+  color: var(--background-black);
+}
+
+::-moz-selection {
+  background: var(--primary-green);
+  color: var(--background-black);
+} 
