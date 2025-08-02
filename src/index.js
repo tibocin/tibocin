@@ -77,9 +77,10 @@ class BitcoinVerifier {
     const timeString = now.toLocaleTimeString('en-US', { 
       hour12: false, 
       hour: '2-digit', 
-      minute: '2-digit' 
+      minute: '2-digit',
+      timeZone: 'UTC'
     });
-    document.getElementById('current-time').textContent = timeString;
+    document.getElementById('current-time').textContent = timeString + ' UTC';
   }
 
   async verifyMessage() {
